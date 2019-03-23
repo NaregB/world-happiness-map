@@ -1,5 +1,6 @@
 # visual studio code
 .vscode/
+.sonarlint/
 __pycache__/
 
 # configs
