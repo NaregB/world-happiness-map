@@ -1,0 +1,6 @@
+# visual studio code
+.vscode/
+__pycache__/
+
+# configs
+api_variables.py
