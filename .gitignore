@@ -1,7 +1,13 @@
 # visual studio code
 .vscode/
 .sonarlint/
+
+# python cache
+api/__pycache__
 __pycache__/
 
 # configs
-api_variables.py
+api/api_variables.py
+
+# useless temporary files
+useless/
