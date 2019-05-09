@@ -18,9 +18,23 @@ app = dash.Dash(__name__, external_stylesheets=external_stylesheets)
 app.layout = html.Div(children=[
     html.H1(children='World Happiness Map', style={'textAlign': 'center'}),
 
-    dcc.Graph(
-        id='example-graph',
+    html.Div(
+        children=[
+            dcc.Graph(
+                id='example-graph',
+                style={'width': '80%', 'float': 'left'},
+                figure={},
+            ),
+            html.Div(
+                id="basic-stats",
+                style={'float': 'left'},
+                children=[
+                    html.Span("Total Tweets:")
+                ]
+            ),
+        ]
     ),
+
 
     dcc.Interval(
         id='interval-component',
@@ -67,7 +81,7 @@ def get_data_frame():
     return df
 
 
-@app.callback(Output('example-graph', 'figure'),
+@app.callback([Output('example-graph', 'figure'), Output('basic-stats', 'children')],
               [Input('interval-component', 'n_intervals')])
 def update_graph_live(n):
     df = get_data_frame()
@@ -107,7 +121,10 @@ def update_graph_live(n):
         )
     }
 
-    return figure
+    children = [
+        html.Span("Tweet count: " + str(df["Tweet_Count"].sum(axis=0)))]
+
+    return figure, children
 
 
 if __name__ == '__main__':
