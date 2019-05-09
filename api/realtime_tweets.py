@@ -1,6 +1,7 @@
 import tweepy
 import redis
 import json
+import re
 from vaderSentiment.vaderSentiment import SentimentIntensityAnalyzer
 
 from api_auth_absolute import api
@@ -10,11 +11,28 @@ analyzer = SentimentIntensityAnalyzer()
 r = redis.Redis(host='localhost', port=6379, db=0)
 
 
+def filter_tweet(t):
+    urls = re.findall(
+        'http[s]?://(?:[a-zA-Z]|[0-9]|[$-_@.&+]|[!*\(\), ]|(?:%[0-9a-fA-F][0-9a-fA-F]))+', t)
+    for url in urls:
+        t = t.replace(url, '')
+
+    if len(t) > 0 and len(
+            [word for word in t.split() if len(word) > 1]):
+        return t
+    else:
+        return ''
+
+
 class MyStreamListener(tweepy.StreamListener):
     def on_data(self, raw_data):
         global r
         try:
             all_data = json.loads(raw_data)
+            text = all_data["text"]
+            text = filter_tweet(text)
+            if text == '':
+                raise Exception('Invalid tweet content')
             country_code = all_data["place"]["country_code"]
             if(country_code == ''):
                 raise Exception('Country code is empty')
@@ -47,8 +65,8 @@ class MyStreamListener(tweepy.StreamListener):
                         polarity_score_compound
                     json_data["total_negative_sentiment"] = json_data["total_negative_sentiment"] + 1
                 r.set(country_code, json.dumps(json_data))
-        except:
-            print("error")
+        except Exception as e:
+            print("Error: " + str(e))
 
     def on_error(self, status_code):
         print(status_code)
