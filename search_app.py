@@ -70,10 +70,10 @@ def update_graph_data(n_clicks, query, count, location):
     for val in results:
         polarity_score_compound = analyzer.polarity_scores(val.text)[
             "compound"]
-        if -0.5 < polarity_score_compound < 0.5:
+        if -0.05 < polarity_score_compound < 0.05:
             dto.neutral_sentiment_score = dto.neutral_sentiment_score + polarity_score_compound
             dto.total_neutral_sentiment = dto.total_neutral_sentiment + 1
-        elif polarity_score_compound >= 0.5:
+        elif polarity_score_compound >= 0.05:
             dto.positive_sentiment_score = dto.positive_sentiment_score + polarity_score_compound
             dto.total_positive_sentiment = dto.total_positive_sentiment + 1
         else:

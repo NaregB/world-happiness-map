@@ -22,11 +22,11 @@ class MyStreamListener(tweepy.StreamListener):
             analyzer = SentimentIntensityAnalyzer()
             polarity_score_compound = analyzer.polarity_scores(all_data["text"])[
                 "compound"]
-            if(data is None):
+            if data is None:
                 # neutral
-                if(polarity_score_compound > -0.5 and 0.5 > polarity_score_compound):
+                if(polarity_score_compound > -0.05 and 0.05 > polarity_score_compound):
                     dto = DTO(0, 0, 0, 0, polarity_score_compound, 1)
-                elif(polarity_score_compound >= 0.5):
+                elif(polarity_score_compound >= 0.05):
                     dto = DTO(polarity_score_compound, 1, 0, 0, 0, 0)
                 else:
                     dto = DTO(0, 0, polarity_score_compound, 1, 0, 0)
@@ -34,11 +34,11 @@ class MyStreamListener(tweepy.StreamListener):
                 r.set(country_code, json_data)
             else:
                 json_data = json.loads(r.get(country_code))
-                if(polarity_score_compound > -0.5 and 0.5 > polarity_score_compound):
+                if(polarity_score_compound > -0.05 and 0.05 > polarity_score_compound):
                     json_data["neutral_sentiment_score"] = json_data["neutral_sentiment_score"] + \
                         polarity_score_compound
                     json_data["total_neutral_sentiment"] = json_data["total_neutral_sentiment"] + 1
-                elif(polarity_score_compound >= 0.5):
+                elif(polarity_score_compound >= 0.05):
                     json_data["positive_sentiment_score"] = json_data["positive_sentiment_score"] + \
                         polarity_score_compound
                     json_data["total_positive_sentiment"] = json_data["total_positive_sentiment"] + 1
