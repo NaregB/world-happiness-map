@@ -3,6 +3,37 @@ import math
 from api.api_auth import api
 import re
 
+PUNC_LIST = [".", "!", "?", ",", ";", ":", "-", "'", "\"",
+             "!!", "!!!", "??", "???", "?!?", "!?!", "?!?!", "!?!?"]
+
+
+def process_hashtags(t):
+    splitted = t.text.split()
+    new_list = []
+    for i, word in enumerate(splitted):
+        if word.startswith('#'):
+            new_list.append(word[1:])
+            if i < len(splitted) - 1 and not word.endswith(tuple(PUNC_LIST)) and not splitted[i + 1].startswith('#'):
+                only_hashtags = True
+                for p in range(0, i):
+                    if not splitted[p].startswith('#'):
+                        only_hashtags = False
+                        break
+                if only_hashtags:
+                    new_list[i] = new_list[i] + '.'
+        else:
+            new_list.append(word)
+            if i < len(splitted) - 1 and not word.endswith(tuple(PUNC_LIST)) and splitted[i + 1].startswith('#'):
+                only_hashtags = True
+                for n in range(i + 1, len(splitted)):
+                    if not splitted[n].startswith('#'):
+                        only_hashtags = False
+                        break
+                if only_hashtags:
+                    new_list[i] = new_list[i] + '.'
+    t.text = " ".join(w for w in new_list)
+    return t
+
 
 def remove_url(str):
     urls = re.findall(
@@ -19,7 +50,8 @@ def filter_tweets(tweets):
 
     def is_meaningful(t): return len(t) > 0 and len(
         [word for word in t.split() if len(word) > 1])
-    filtered = [t for t in tweets if is_meaningful(t.text)]
+    filtered = [process_hashtags(t)
+                for t in tweets if is_meaningful(t.text)]
     return filtered
 
 

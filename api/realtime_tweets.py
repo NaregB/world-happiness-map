@@ -7,8 +7,38 @@ from vaderSentiment.vaderSentiment import SentimentIntensityAnalyzer
 from api_auth_absolute import api
 from redis_dto import DTO
 
+PUNC_LIST = [".", "!", "?", ",", ";", ":", "-", "'", "\"",
+             "!!", "!!!", "??", "???", "?!?", "!?!", "?!?!", "!?!?"]
+
 analyzer = SentimentIntensityAnalyzer()
 r = redis.Redis(host='localhost', port=6379, db=0)
+
+
+def process_hashtags(t):
+    splitted = t.split()
+    new_list = []
+    for i, word in enumerate(splitted):
+        if word.startswith('#'):
+            new_list.append(word[1:])
+            if i < len(splitted) - 1 and not word.endswith(tuple(PUNC_LIST)) and not splitted[i + 1].startswith('#'):
+                only_hashtags = True
+                for p in range(0, i):
+                    if not splitted[p].startswith('#'):
+                        only_hashtags = False
+                        break
+                if only_hashtags:
+                    new_list[i] = new_list[i] + '.'
+        else:
+            new_list.append(word)
+            if i < len(splitted) - 1 and not word.endswith(tuple(PUNC_LIST)) and splitted[i + 1].startswith('#'):
+                only_hashtags = True
+                for n in range(i + 1, len(splitted)):
+                    if not splitted[n].startswith('#'):
+                        only_hashtags = False
+                        break
+                if only_hashtags:
+                    new_list[i] = new_list[i] + '.'
+    return " ".join(w for w in new_list)
 
 
 def filter_tweet(t):
@@ -19,7 +49,7 @@ def filter_tweet(t):
 
     if len(t) > 0 and len(
             [word for word in t.split() if len(word) > 1]):
-        return t
+        return process_hashtags(t)
     else:
         return ''
 
