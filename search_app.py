@@ -1,6 +1,6 @@
 import csv
 import pycountry
-from vaderSentiment.vaderSentiment import SentimentIntensityAnalyzer
+from api.vaderSentimentForked.vaderSentiment import SentimentIntensityAnalyzer
 
 import plotly.graph_objs as go
 import dash

@@ -9,7 +9,7 @@ import dash_core_components as dcc
 import dash_html_components as html
 from dash.dependencies import Input, Output
 
-r = redis.Redis(host='localhost', port=6379, db=0)
+r = redis.Redis(host='localhost', port=6379, db=1)
 country_codes = [country.alpha_3 for country in pycountry.countries]
 
 external_stylesheets = ['https://codepen.io/chriddyp/pen/bWLwgP.css']

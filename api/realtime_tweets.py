@@ -2,7 +2,7 @@ import tweepy
 import redis
 import json
 import re
-from vaderSentiment.vaderSentiment import SentimentIntensityAnalyzer
+from vaderSentimentForked.vaderSentiment import SentimentIntensityAnalyzer
 
 from api_auth_absolute import api
 from redis_dto import DTO
@@ -11,13 +11,15 @@ PUNC_LIST = [".", "!", "?", ",", ";", ":", "-", "'", "\"",
              "!!", "!!!", "??", "???", "?!?", "!?!", "?!?!", "!?!?"]
 
 analyzer = SentimentIntensityAnalyzer()
-r = redis.Redis(host='localhost', port=6379, db=0)
+r = redis.Redis(host='localhost', port=6379, db=1)
 
 
-def process_hashtags(t):
+def process_hashtags_and_mentions(t):
     splitted = t.split()
     new_list = []
     for i, word in enumerate(splitted):
+        if word.startswith('@'):
+            continue
         if word.startswith('#'):
             new_list.append(word[1:])
             if i < len(splitted) - 1 and not word.endswith(tuple(PUNC_LIST)) and not splitted[i + 1].startswith('#'):
@@ -49,7 +51,7 @@ def filter_tweet(t):
 
     if len(t) > 0 and len(
             [word for word in t.split() if len(word) > 1]):
-        return process_hashtags(t)
+        return process_hashtags_and_mentions(t)
     else:
         return ''
 
@@ -59,7 +61,11 @@ class MyStreamListener(tweepy.StreamListener):
         global r
         try:
             all_data = json.loads(raw_data)
-            text = all_data["text"]
+            text = ""
+            if "extended_tweet" in all_data.keys():
+                text = all_data["extended_tweet"]["full_text"]
+            else:
+                text = all_data["text"]
             text = filter_tweet(text)
             if text == '':
                 raise Exception('Invalid tweet content')
@@ -68,8 +74,9 @@ class MyStreamListener(tweepy.StreamListener):
                 raise Exception('Country code is empty')
             data = r.get(country_code)
             analyzer = SentimentIntensityAnalyzer()
-            polarity_score_compound = analyzer.polarity_scores(all_data["text"])[
+            polarity_score_compound = analyzer.polarity_scores(text)[
                 "compound"]
+            print("Text: " + text)
             if data is None:
                 # neutral
                 if(polarity_score_compound > -0.05 and 0.05 > polarity_score_compound):
@@ -107,7 +114,7 @@ def start_stream():
         try:
             my_stream_listener = MyStreamListener()
             my_stream = tweepy.Stream(
-                auth=api.auth, listener=my_stream_listener)
+                auth=api.auth, listener=my_stream_listener, tweet_mode='extended')
             # realtime tweets in english with bounding box set to the whole world
             my_stream.filter(languages=['en'], locations=[-180, -90, 180, 90])
         except:

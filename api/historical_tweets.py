@@ -7,10 +7,12 @@ PUNC_LIST = [".", "!", "?", ",", ";", ":", "-", "'", "\"",
              "!!", "!!!", "??", "???", "?!?", "!?!", "?!?!", "!?!?"]
 
 
-def process_hashtags(t):
+def process_hashtags_and_mentions(t):
     splitted = t.text.split()
     new_list = []
     for i, word in enumerate(splitted):
+        if word.startswith('@'):
+            continue
         if word.startswith('#'):
             new_list.append(word[1:])
             if i < len(splitted) - 1 and not word.endswith(tuple(PUNC_LIST)) and not splitted[i + 1].startswith('#'):
@@ -50,7 +52,7 @@ def filter_tweets(tweets):
 
     def is_meaningful(t): return len(t) > 0 and len(
         [word for word in t.split() if len(word) > 1])
-    filtered = [process_hashtags(t)
+    filtered = [process_hashtags_and_mentions(t)
                 for t in tweets if is_meaningful(t.text)]
     return filtered
 
