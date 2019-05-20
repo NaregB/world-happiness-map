@@ -195,21 +195,24 @@ class SentiText(object):
         Leaves contractions and most emoticons
             Does not preserve punc-plus-letter emoticons (e.g. :D)
         """
-        lower_text = self.text.lower()
+        text = self.text
 
-        if "kind of" in lower_text:
-            lower_text = lower_text.replace("kind of", "kinda")
+        if "kind of" in text.lower():
+            pattern = re.compile("kind of", re.IGNORECASE)
+            text = pattern.sub("kinda", text)
 
-        if "sort of" in lower_text:
-            lower_text = lower_text.replace("sort of", "sorta")
+        if "sort of" in text.lower():
+            pattern = re.compile("sort of", re.IGNORECASE)
+            text = pattern.sub("sorta", text)
 
-        if "without doubt" in lower_text:
-            lower_text = lower_text.replace("without doubt", "absolutely")
+        if "without doubt" in text.lower():
+            pattern = re.compile("without doubt", re.IGNORECASE)
+            text = pattern.sub("absolutely", text)
 
-        wes = lower_text.split()
+        wes = text.split()
 
         for idiom in IDIOM_DICT:
-            if idiom in lower_text:
+            if idiom in text.lower():
                 index = wes.index(idiom.split(' ', 1)[0])
                 length = len(idiom.split())
                 wes[index] = idiom
