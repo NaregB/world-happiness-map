@@ -1,0 +1,21 @@
+CountryEconomy,VADER Neutral,VADER W/O Neutral
+Finland,Switzerland,Switzerland
+Denmark,Denmark,Denmark
+Norway,Germany,France
+Iceland,Poland,Italy
+Netherlands,Sweden,Sweden
+Switzerland,Ireland,Belgium
+Sweden,UK,Greece
+New Zealand,Norway,Netherlands
+Canada,Belgium,Ireland
+Austria,France,UAE
+Australia,Greece,Indonesia
+Costa Rica,Finland,Turkey
+Israel,UAE,Russia
+Luxembourg,New Zealand,UK
+UK,Italy,China
+Ireland,Netherlands,Singapore
+Germany,Russia,South Korea
+Belgium,Honk Kong,Spain
+US,Canada,Portugal
+Czech Republic,China,Philippines
