@@ -22,7 +22,7 @@ def process_hashtags_and_mentions(t):
                         only_hashtags = False
                         break
                 if only_hashtags:
-                    new_list[i] = new_list[i] + '.'
+                    new_list[-1] = new_list[-1] + '.'
         else:
             new_list.append(word)
             if i < len(splitted) - 1 and not word.endswith(tuple(PUNC_LIST)) and splitted[i + 1].startswith('#'):
@@ -32,7 +32,7 @@ def process_hashtags_and_mentions(t):
                         only_hashtags = False
                         break
                 if only_hashtags:
-                    new_list[i] = new_list[i] + '.'
+                    new_list[-1] = new_list[-1] + '.'
     t.text = " ".join(w for w in new_list)
     return t
 
@@ -66,7 +66,8 @@ def search(query, num, geocode):
     for _ in range(1, page_count + 1):
         tweets = api.search(q=query, lang="en", count=count,
                             since_id=since_id, geocode=geocode)
-        all_tweets = all_tweets+tweets
-        since_id = tweets[-1].id
+        if len(tweets) != 0:
+            all_tweets = all_tweets+tweets
+            since_id = tweets[-1].id
 
     return filter_tweets(all_tweets)

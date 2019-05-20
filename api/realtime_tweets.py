@@ -29,7 +29,7 @@ def process_hashtags_and_mentions(t):
                         only_hashtags = False
                         break
                 if only_hashtags:
-                    new_list[i] = new_list[i] + '.'
+                    new_list[-1] = new_list[-1] + '.'
         else:
             new_list.append(word)
             if i < len(splitted) - 1 and not word.endswith(tuple(PUNC_LIST)) and splitted[i + 1].startswith('#'):
@@ -39,7 +39,7 @@ def process_hashtags_and_mentions(t):
                         only_hashtags = False
                         break
                 if only_hashtags:
-                    new_list[i] = new_list[i] + '.'
+                    new_list[-1] = new_list[-1] + '.'
     return " ".join(w for w in new_list)
 
 
