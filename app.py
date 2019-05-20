@@ -67,7 +67,8 @@ def get_data_frame():
         total_score = country_data['positive_sentiment_score'] + \
             country_data['negative_sentiment_score'] + \
             country_data['neutral_sentiment_score']
-        avg_polarity_score = round(total_score/tweet_count, 4)
+        avg_polarity_score = round(
+            total_score/tweet_count, 4) if tweet_count != 0 else total_score
 
         avg_positive_score = round(country_data['positive_sentiment_score'] /
                                    country_data['total_positive_sentiment'], 4) if country_data['total_positive_sentiment'] != 0 else 0
@@ -128,4 +129,4 @@ def update_graph_live(n):
 
 
 if __name__ == '__main__':
-    app.run_server(debug=True, port=8086)
+    app.run_server(debug=True, port=8090)

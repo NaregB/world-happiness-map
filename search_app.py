@@ -84,7 +84,8 @@ def update_graph_data(n_clicks, query, count, location):
     total_score = dto.positive_sentiment_score + \
         dto.negative_sentiment_score + \
         dto.neutral_sentiment_score
-    avg_polarity_score = round(total_score/tweet_count, 4)
+    avg_polarity_score = round(
+        total_score/tweet_count, 4) if tweet_count != 0 else total_score
 
     avg_positive_score = round(dto.positive_sentiment_score /
                                dto.total_positive_sentiment, 4) if dto.total_positive_sentiment != 0 else 0
@@ -142,4 +143,4 @@ def update_graph_data(n_clicks, query, count, location):
 
 
 if __name__ == '__main__':
-    app.run_server(debug=True, port=8060)
+    app.run_server(debug=True, port=8065)
